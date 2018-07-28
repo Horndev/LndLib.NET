@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.10
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightningLib", "LightningLib\LightningLib.csproj", "{824D15C2-A623-46D0-A45E-CF152E97C025}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightningLib.Tests", "LightningLib.Tests\LightningLib.Tests.csproj", "{1895BAE9-1828-46D1-895C-282199CA3B06}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{824D15C2-A623-46D0-A45E-CF152E97C025}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{824D15C2-A623-46D0-A45E-CF152E97C025}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{824D15C2-A623-46D0-A45E-CF152E97C025}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{824D15C2-A623-46D0-A45E-CF152E97C025}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1895BAE9-1828-46D1-895C-282199CA3B06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1895BAE9-1828-46D1-895C-282199CA3B06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1895BAE9-1828-46D1-895C-282199CA3B06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1895BAE9-1828-46D1-895C-282199CA3B06}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {92373E07-194D-4A74-B34E-49A47FE7EA15}
+	EndGlobalSection
+EndGlobal

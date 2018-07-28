@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RestSharp;
-using NBitcoin.DataEncoders;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using System.Collections.Generic;
@@ -199,9 +198,9 @@ namespace LightningNetworkTests
             string macaroon = mac;
             if (mac == "")
             {
-                var m = System.IO.File.ReadAllBytes("readonly.macaroon");
-                HexEncoder h = new HexEncoder();
-                macaroon = h.EncodeData(m);
+                //var m = System.IO.File.ReadAllBytes("readonly.macaroon");
+                //HexEncoder h = new HexEncoder();
+                //macaroon = h.EncodeData(m);
             }
             //string TLSFilename = "tls.cert";
             //X509Certificate2 certificates = new X509Certificate2();
@@ -297,7 +296,7 @@ namespace LightningNetworkTests
         public static void LndApiGetStrAsync(string host, string restpath, int port = 8080, string adminMacaroon = "")
         {
             //var m = System.IO.File.ReadAllBytes("readonly.macaroon");
-            HexEncoder h = new HexEncoder();
+            //HexEncoder h = new HexEncoder();
             string macaroon = "";
             if (adminMacaroon != "")
             {
@@ -314,8 +313,8 @@ namespace LightningNetworkTests
             //string TLSFilename = "tls.cert";
             X509Certificate2 certificates = new X509Certificate2();
 
-            var tlsc = h.DecodeData(tlscert);
-            certificates.Import(tlsc);
+            //var tlsc = h.DecodeData(tlscert);
+            //certificates.Import(tlsc);
 
             var client = new RestClient("https://" + host + ":" + Convert.ToString(port));
             client.ClientCertificates = new X509CertificateCollection() { certificates };
@@ -403,17 +402,17 @@ namespace LightningNetworkTests
         {
             string TLSFilename = "tls.cert";
             var m = System.IO.File.ReadAllBytes("readonly.macaroon");
-            HexEncoder h = new HexEncoder();
-            string macaroon = h.EncodeData(m);
+            //HexEncoder h = new HexEncoder();
+            //string macaroon = h.EncodeData(m);
 
             X509Certificate2 certificates = new X509Certificate2();
 
             var tls = System.IO.File.ReadAllBytes(TLSFilename);
-            var tlsh = h.EncodeData(tls);
+            //var tlsh = h.EncodeData(tls);
 
-            var tlsc = h.DecodeData(tlsh);
+            //var tlsc = h.DecodeData(tlsh);
 
-            certificates.Import(tlsc);
+            //certificates.Import(tlsc);
 
             var client = new RestClient("https://" + host + ":" + Convert.ToString(port));
             client.ClientCertificates = new X509CertificateCollection() { certificates };
@@ -431,7 +430,7 @@ namespace LightningNetworkTests
                 };
 
             var request = new RestRequest(restpath, Method.POST);
-            request.AddHeader("Grpc-Metadata-macaroon", macaroon);
+            //request.AddHeader("Grpc-Metadata-macaroon", macaroon);
             request.RequestFormat = DataFormat.Json;
 
             request.AddBody(body);
