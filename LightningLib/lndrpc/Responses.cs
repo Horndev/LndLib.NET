@@ -191,6 +191,8 @@ namespace LightningLib.lndrpc
 
     public class SendPaymentResponse
     {
+        public string error { get; set; }
+        public int code { get; set; }
         public string payment_error { get; set; }
         public string payment_preimage { get; set; }
         public PaymentRoute payment_route { get; set; }

@@ -238,6 +238,11 @@ namespace LightningLib.lndrpc
             request.RequestFormat = DataFormat.Json;
             request.AddBody(body);
             IRestResponse<T> response = client.Execute<T>(request);
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                string Content = response.Content;
+                // "{\"error\":\"invoice expired. Valid until 2018-08-26 17:26:16 +0000 UTC\",\"code\":2}"
+            }
             T info = response.Data;
             return info;
         }
