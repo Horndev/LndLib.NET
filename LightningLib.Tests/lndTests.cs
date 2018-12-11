@@ -193,6 +193,21 @@ namespace LightningNetworkTests
             Console.WriteLine(info.alias);
         }
 
+        [TestMethod]
+        public void TestParseMacaroons()
+        {
+            string readfile = ConfigurationManager.AppSettings["LnMainnetMacaroonReadFile"];
+            string invoicefile = ConfigurationManager.AppSettings["LnMainnetMacaroonInvoiceFile"];
+            string adminfile = ConfigurationManager.AppSettings["LnMainnetMacaroonAdminFile"];
+            var m = System.IO.File.ReadAllBytes(readfile);
+            DataEncoders.HexEncoder h = new DataEncoders.HexEncoder();
+            var macaroon = h.EncodeData(m);
+
+            Console.WriteLine("Invoice: " + h.EncodeData(System.IO.File.ReadAllBytes(invoicefile)));
+            Console.WriteLine("Admin: " + h.EncodeData(System.IO.File.ReadAllBytes(adminfile)));
+            Console.WriteLine("Readonly: " + macaroon);
+        }
+
         private static T LndApiGetObj<T>(string host, string restpath, int port = 8080, string mac = "") where T: new()
         {
             string macaroon = mac;
