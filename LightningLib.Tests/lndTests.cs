@@ -289,20 +289,27 @@ namespace LightningNetworkTests
             Console.WriteLine(responseStr);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [TestMethod]
         public void TestAPIGetInvoiceAsString()
         {
             string host = ConfigurationManager.AppSettings["LnMainnetHost"];
             string restpath = "/v1/invoice";
-            var reqObj = new FwdRequest()
-            {
-                start_time = "0",
-                end_time = "999999999999",
-                index_offset = 0,
-                num_max_events = 1000,
-            };
 
-            string responseStr = LndRpcClient.LndApiPostStr(host, restpath, reqObj, 
+            DataEncoders.HexEncoder h = new DataEncoders.HexEncoder();
+
+            string rhash = "NlorlO9GxWXuPfkFsuPh7oaW5HHtDVePMj4YOtGpr2E=";
+
+            var rhash_bytes = Convert.FromBase64String(rhash);
+
+            var rhash_hex = h.EncodeData(rhash_bytes);
+
+            string responseStr = LndRpcClient.LndApiGetStr(
+                host: host, 
+                restpath: restpath + "/" + rhash_hex,
+                urlParameters: null, 
                 adminMacaroon: ConfigurationManager.AppSettings["LnMainnetMacaroonRead"]);
             Console.WriteLine(responseStr);
         }
