@@ -202,6 +202,21 @@ namespace LightningLib.lndrpc
             return LndApiPost<ForwardingEventsResponse>(_host, "/v1/switch", reqObj, adminMacaroon: _macaroonAdmin);
         }
 
+        public GetInvoicesResult GetInvoices(bool pendingOnly = false, int numMaxInvoices = 0, bool reversed = false)
+        {
+            var parameters = new Dictionary<string, string>()
+            {
+                { "pending_only", pendingOnly ? "true" : "false" },
+                { "reversed", reversed ? "true" : "false" }
+            };
+
+            if (numMaxInvoices > 0)
+            {
+                parameters.Add("num_max_invoices", Convert.ToString(numMaxInvoices));
+            }
+            return LndApiGetObj<GetInvoicesResult>(_host, "/v1/invoices", 8080, parameters, readMacaroon: _macaroonRead);
+        }
+
         private static T LndApiPost<T>(string host, string restpath, object body, int port = 8080, string adminMacaroon = "") where T : new()
         {
             

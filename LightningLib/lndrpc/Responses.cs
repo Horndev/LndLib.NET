@@ -61,16 +61,31 @@ namespace LightningLib.lndrpc
 
     public class Invoice
     {
-        public string memo { get; set; }
         public string r_preimage { get; set; }
         public string r_hash { get; set; }
         public string value { get; set; }
-        public bool settled { get; set; }
         public string creation_date { get; set; }
-        public string settle_date { get; set; }
         public string payment_request { get; set; }
         public string expiry { get; set; }
         public string cltv_expiry { get; set; }
+        public string add_index { get; set; }
+        public bool? settled { get; set; }
+        public string settle_date { get; set; }
+        public string settle_index { get; set; }
+        public string amt_paid { get; set; }
+        public string amt_paid_sat { get; set; }
+        public string amt_paid_msat { get; set; }
+        public string memo { get; set; }
+    }
+
+    /// <summary>
+    /// returned by /v1/invoices
+    /// </summary>
+    public class GetInvoicesResult
+    {
+        public List<Invoice> invoices { get; set; }
+        public string last_index_offset { get; set; }
+        public string first_index_offset { get; set; }
     }
 
     public class InvoiceEvent

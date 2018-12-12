@@ -94,6 +94,34 @@ namespace LightningNetworkTests
         }
 
         [TestMethod]
+        public void TestAPI_Mainnet_GetForwardingEvents()
+        {
+            bool useTestnet = false;
+            var lndclient = new LndRpcClient(
+                    host: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetHost" : "LnMainnetHost"],
+                    macaroonAdmin: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonAdmin" : "LnMainnetMacaroonAdmin"],
+                    macaroonRead: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonRead" : "LnMainnetMacaroonRead"],
+                    macaroonInvoice: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonInvoice" : "LnMainnetMacaroonInvoice"]);
+
+            var fwd = lndclient.GetForwardingEvents();
+            Console.WriteLine(fwd.ToString());
+        }
+
+        [TestMethod]
+        public void TestAPI_Mainnet_GetInvoices()
+        {
+            bool useTestnet = false;
+            var lndclient = new LndRpcClient(
+                    host: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetHost" : "LnMainnetHost"],
+                    macaroonAdmin: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonAdmin" : "LnMainnetMacaroonAdmin"],
+                    macaroonRead: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonRead" : "LnMainnetMacaroonRead"],
+                    macaroonInvoice: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonInvoice" : "LnMainnetMacaroonInvoice"]);
+
+            var invs = lndclient.GetInvoices();
+            Console.WriteLine(invs.ToString());
+        }
+
+        [TestMethod]
         public void TestAPI_Mainnet_Invoice_CreateInvoice()
         {
             //request a new invoice
@@ -107,7 +135,6 @@ namespace LightningNetworkTests
             };
 
             //admin
-
             string responseStr = LndRpcClient.LndApiPostStr(host, restpath, invoice, adminMacaroon: MacaroonAdmin[false]);
             Console.WriteLine(responseStr);
         }
@@ -276,6 +303,26 @@ namespace LightningNetworkTests
             };
 
             string responseStr = LndRpcClient.LndApiPostStr(host, restpath, reqObj, 
+                adminMacaroon: ConfigurationManager.AppSettings["LnMainnetMacaroonRead"]);
+            Console.WriteLine(responseStr);
+        }
+
+        [TestMethod]
+        public void TestAPIGetInvoicesAsString()
+        {
+            string host = ConfigurationManager.AppSettings["LnMainnetHost"];
+            string restpath = "/v1/invoices";
+
+            var parameters = new Dictionary<string, string>()
+            {
+                { "pending_only", "true" },
+                { "num_max_invoices", "2" }
+            };
+
+            string responseStr = LndRpcClient.LndApiGetStr(
+                host: host, 
+                restpath: restpath, 
+                urlParameters: parameters,
                 adminMacaroon: ConfigurationManager.AppSettings["LnMainnetMacaroonRead"]);
             Console.WriteLine(responseStr);
         }
