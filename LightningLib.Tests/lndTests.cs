@@ -108,6 +108,25 @@ namespace LightningNetworkTests
         }
 
         [TestMethod]
+        public void TestAPI_Mainnet_GetInvoice()
+        {
+            bool useTestnet = false;
+            var lndclient = new LndRpcClient(
+                    host: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetHost" : "LnMainnetHost"],
+                    macaroonAdmin: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonAdmin" : "LnMainnetMacaroonAdmin"],
+                    macaroonRead: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonRead" : "LnMainnetMacaroonRead"],
+                    macaroonInvoice: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonInvoice" : "LnMainnetMacaroonInvoice"]);
+
+            string rhash = "EjMZEQRjlPf/f7aVmpjQBUFCZg/o1dH1GUQiu99Hm7s=";// "NlorlO9GxWXuPfkFsuPh7oaW5HHtDVePMj4YOtGpr2E=";
+
+            var inv = lndclient.GetInvoice(rhash: rhash);
+            Console.WriteLine(inv.ToString());
+        }
+
+        /// <summary>
+        /// Test method which returns all of the invoices on the LND node
+        /// </summary>
+        [TestMethod]
         public void TestAPI_Mainnet_GetInvoices()
         {
             bool useTestnet = false;
@@ -117,7 +136,8 @@ namespace LightningNetworkTests
                     macaroonRead: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonRead" : "LnMainnetMacaroonRead"],
                     macaroonInvoice: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonInvoice" : "LnMainnetMacaroonInvoice"]);
 
-            var invs = lndclient.GetInvoices();
+            var invs = lndclient.GetInvoices(
+                pendingOnly: false);
             Console.WriteLine(invs.ToString());
         }
 
@@ -310,7 +330,7 @@ namespace LightningNetworkTests
                 host: host, 
                 restpath: restpath + "/" + rhash_hex,
                 urlParameters: null, 
-                adminMacaroon: ConfigurationManager.AppSettings["LnMainnetMacaroonRead"]);
+                adminMacaroon: ConfigurationManager.AppSettings["LnMainnetMacaroonAdmin"]);
             Console.WriteLine(responseStr);
         }
 

@@ -217,6 +217,21 @@ namespace LightningLib.lndrpc
             return LndApiGetObj<GetInvoicesResult>(_host, "/v1/invoices", 8080, parameters, readMacaroon: _macaroonRead);
         }
 
+        public Invoice GetInvoice(string rhash)
+        {
+            DataEncoders.HexEncoder h = new DataEncoders.HexEncoder();
+
+            var rhash_bytes = Convert.FromBase64String(rhash);
+
+            var rhash_hex = h.EncodeData(rhash_bytes);
+            return LndApiGetObj<Invoice>(
+                host: _host, 
+                restpath: "/v1/invoice/" + rhash_hex, 
+                port: 8080, 
+                urlParameters: null, 
+                readMacaroon: _macaroonAdmin);
+        }
+
         private static T LndApiPost<T>(string host, string restpath, object body, int port = 8080, string adminMacaroon = "") where T : new()
         {
             
