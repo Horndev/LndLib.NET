@@ -93,6 +93,23 @@ namespace LightningLib.lndrpc
         public Invoice result { get; set; }
     }
 
+    public class Payment
+    {
+        public string payment_hash { get; set; }
+        public string value { get; set; }
+        public string creation_date { get; set; }
+        public List<string> path { get; set; }
+        public string payment_preimage { get; set; }
+        public string value_sat { get; set; }
+        public string value_msat { get; set; }
+        public string fee { get; set; }
+    }
+
+    public class GetPaymentsResult
+    {
+        public List<Payment> payments { get; set; }
+    }
+
     public class GetInfoResponse
     {
         public string identity_pubkey { get; set; }

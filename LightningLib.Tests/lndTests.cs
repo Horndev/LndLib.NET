@@ -117,7 +117,7 @@ namespace LightningNetworkTests
                     macaroonRead: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonRead" : "LnMainnetMacaroonRead"],
                     macaroonInvoice: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonInvoice" : "LnMainnetMacaroonInvoice"]);
 
-            string rhash = "EjMZEQRjlPf/f7aVmpjQBUFCZg/o1dH1GUQiu99Hm7s=";// "NlorlO9GxWXuPfkFsuPh7oaW5HHtDVePMj4YOtGpr2E=";
+            string rhash = "E2UuciQ9iUiXLRY/BgHIa+sCaim3o24RbP+iwWQTX7Y=";// "EjMZEQRjlPf /f7aVmpjQBUFCZg/o1dH1GUQiu99Hm7s=";// "NlorlO9GxWXuPfkFsuPh7oaW5HHtDVePMj4YOtGpr2E=";
 
             var inv = lndclient.GetInvoice(rhash: rhash);
             Console.WriteLine(inv.ToString());
@@ -139,6 +139,23 @@ namespace LightningNetworkTests
             var invs = lndclient.GetInvoices(
                 pendingOnly: false);
             Console.WriteLine(invs.ToString());
+        }
+
+        /// <summary>
+        /// Test method which returns all of the invoices on the LND node
+        /// </summary>
+        [TestMethod]
+        public void TestAPI_Mainnet_GetPayments()
+        {
+            bool useTestnet = false;
+            var lndclient = new LndRpcClient(
+                    host: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetHost" : "LnMainnetHost"],
+                    macaroonAdmin: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonAdmin" : "LnMainnetMacaroonAdmin"],
+                    macaroonRead: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonRead" : "LnMainnetMacaroonRead"],
+                    macaroonInvoice: System.Configuration.ConfigurationManager.AppSettings[useTestnet ? "LnTestnetMacaroonInvoice" : "LnMainnetMacaroonInvoice"]);
+
+            var invs = lndclient.GetPayments();
+            Console.WriteLine(invs.payments.Count);
         }
 
         [TestMethod]
@@ -320,7 +337,7 @@ namespace LightningNetworkTests
 
             DataEncoders.HexEncoder h = new DataEncoders.HexEncoder();
 
-            string rhash = "NlorlO9GxWXuPfkFsuPh7oaW5HHtDVePMj4YOtGpr2E=";
+            string rhash = "lA5j2IPt9JWUIIObf5kiDlIhYbSnRTLbJKNa7LBogHs=";// "E2UuciQ9iUiXLRY/BgHIa+sCaim3o24RbP+iwWQTX7Y=";// "NlorlO9GxWXuPfkFsuPh7oaW5HHtDVePMj4YOtGpr2E=";
 
             var rhash_bytes = Convert.FromBase64String(rhash);
 
@@ -330,6 +347,23 @@ namespace LightningNetworkTests
                 host: host, 
                 restpath: restpath + "/" + rhash_hex,
                 urlParameters: null, 
+                adminMacaroon: ConfigurationManager.AppSettings["LnMainnetMacaroonAdmin"]);
+            Console.WriteLine(responseStr);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [TestMethod]
+        public void TestAPIGetPaymentsAsString()
+        {
+            string host = ConfigurationManager.AppSettings["LnMainnetHost"];
+            string restpath = "/v1/payments";
+
+            string responseStr = LndRpcClient.LndApiGetStr(
+                host: host,
+                restpath: restpath,
+                urlParameters: null,
                 adminMacaroon: ConfigurationManager.AppSettings["LnMainnetMacaroonAdmin"]);
             Console.WriteLine(responseStr);
         }

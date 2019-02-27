@@ -232,6 +232,16 @@ namespace LightningLib.lndrpc
                 readMacaroon: _macaroonAdmin);
         }
 
+        public GetPaymentsResult GetPayments()
+        {
+            return LndApiGetObj<GetPaymentsResult>(
+                host: _host,
+                restpath: "/v1/payments",
+                port: 8080,
+                urlParameters: null,
+                readMacaroon: _macaroonAdmin);
+        }
+
         private static T LndApiPost<T>(string host, string restpath, object body, int port = 8080, string adminMacaroon = "") where T : new()
         {
             
