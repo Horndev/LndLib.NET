@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="lndrpc\Encoders.cs" />
+    <Compile Include="lndrpc\Exceptions\RestException.cs" />
     <Compile Include="lndrpc\HexEncoder.cs" />
     <Compile Include="lndrpc\LndRpcClient.cs" />
     <Compile Include="lndrpc\Responses.cs" />

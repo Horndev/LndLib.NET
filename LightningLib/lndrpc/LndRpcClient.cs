@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using LightningLib.lndrpc.Exceptions;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -217,13 +218,22 @@ namespace LightningLib.lndrpc
             return LndApiGetObj<GetInvoicesResult>(_host, "/v1/invoices", 8080, parameters, readMacaroon: _macaroonRead);
         }
 
+        public Invoice GetInvoiceFromHashStr(string rhash_hex)
+        {
+            return LndApiGetObj<Invoice>(
+                host: _host,
+                restpath: "/v1/invoice/" + rhash_hex,
+                port: 8080,
+                urlParameters: null,
+                readMacaroon: _macaroonAdmin);
+        }
+
         public Invoice GetInvoice(string rhash)
         {
             DataEncoders.HexEncoder h = new DataEncoders.HexEncoder();
-
             var rhash_bytes = Convert.FromBase64String(rhash);
-
             var rhash_hex = h.EncodeData(rhash_bytes);
+
             return LndApiGetObj<Invoice>(
                 host: _host, 
                 restpath: "/v1/invoice/" + rhash_hex, 
@@ -369,33 +379,24 @@ namespace LightningLib.lndrpc
             return responseStr;
         }
 
-        private static T LndApiGetObj<T>(string host, string restpath, int port = 8080, Dictionary<string, string> urlParameters = null, string readMacaroon = "") where T : new()
+        private T LndApiGetObj<T>(string host, string restpath, int port = 8080, Dictionary<string, string> urlParameters = null, string readMacaroon = "") where T : new()
         {
             string macaroon = readMacaroon;
-            //var m = System.IO.File.ReadAllBytes("readonly.macaroon");
             
-            //string tlscert = "2d2d2d2d2d424547494e2043455254494649434154452d2d2d2d2d0a4d494943417a434341617167417749424167494a4150486f4e765a39665942304d416f4743437147534d343942414d434d4430784c54417242674e5642414d4d0a4a474e766157357759573570597a45755a57467a6448567a4c6d4e736233566b595842774c6d463664584a6c4c6d4e766254454d4d416f4741315545436777440a6247356b4d434158445445344d444d794e4445354d5459774e6c6f59447a49784d5467774d6a49344d546b784e6a4132576a41394d5330774b775944565151440a4443526a62326c756347467561574d784c6d5668633352316379356a624739315a47467763433568656e56795a53356a623230784444414b42674e5642416f4d0a413278755a44425a4d424d4742797147534d34394167454743437147534d3439417745484130494142475169586c5970527766436648736e65694352627774430a4e774738656562437646786b344c6e4461584732684472305137394c465044376d34354271756f684937653531496f385073454c51644d4a2f2f686d6756616a0a675a41776759307744675944565230504151482f4241514441674b6b4d41384741315564457745422f7751464d414d4241663877616759445652305242474d770a5959496b59323970626e4268626d6c6a4d53356c59584e3064584d7559327876645752686348417559587031636d55755932397467676c7362324e68624768760a63335348424838414141474845414141414141414141414141414141414141414141474842416f4141415348455036414141414141414141416730362f2f34580a76344d77436759494b6f5a497a6a30454177494452774177524149674242735234374b592b6b777761456551565245634237703078472f41522b34446e7478770a6d794a633476454349446561797a6962437156357a795850392f624849485074637a51336c4148704b33546c62707932636c61410a2d2d2d2d2d454e442043455254494649434154452d2d2d2d2d0a";
-            // h.EncodeData(m);, 
-            //string TLSFilename = "tls.cert";
             X509Certificate2 certificates = new X509Certificate2();
 
-            //var tlsc = h.DecodeData(tlscert);
-            //certificates.Import(tlsc);
+            var client = new RestClient("https://" + host + ":" + Convert.ToString(port))
+            {
+                ClientCertificates = new X509CertificateCollection() { certificates },
 
-            var client = new RestClient("https://" + host + ":" + Convert.ToString(port));
-            client.ClientCertificates = new X509CertificateCollection() { certificates };
-
-            //X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
-            //store.Open(OpenFlags.ReadWrite);
-            //store.Add(certificates);
-
-            client.RemoteCertificateValidationCallback =
+                RemoteCertificateValidationCallback =
                 delegate (object s, X509Certificate certificate,
                           X509Chain chain, SslPolicyErrors sslPolicyErrors)
                 {
                     //TODO: fix later
                     return true;
-                };
+                }
+            };
 
             var request = new RestRequest(restpath, Method.GET);
             if (urlParameters != null)
@@ -407,6 +408,17 @@ namespace LightningLib.lndrpc
             }
             request.AddHeader("Grpc-Metadata-macaroon", macaroon);
             IRestResponse<T> response = client.Execute<T>(request);
+
+            if (!response.IsSuccessful)
+            {
+                throw new RestException()
+                {
+                    Content = response.Content
+                };
+            }
+                
+            
+
             T info = response.Data;
             return info;
         }
