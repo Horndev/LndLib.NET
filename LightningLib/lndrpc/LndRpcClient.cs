@@ -293,6 +293,17 @@ namespace LightningLib.lndrpc
                 string Content = response.Content;
                 // "{\"error\":\"invoice expired. Valid until 2018-08-26 17:26:16 +0000 UTC\",\"code\":2}"
             }
+
+            if (!response.IsSuccessful)
+            {
+                throw new RestException()
+                {
+                    Content = response.Content,
+                    StatusCode = response.StatusCode,
+                    StatusDescription = response.StatusDescription
+                };
+            }
+
             T info = response.Data;
             return info;
         }
@@ -413,7 +424,9 @@ namespace LightningLib.lndrpc
             {
                 throw new RestException()
                 {
-                    Content = response.Content
+                    Content = response.Content,
+                    StatusCode = response.StatusCode,
+                    StatusDescription = response.StatusDescription
                 };
             }
                 
