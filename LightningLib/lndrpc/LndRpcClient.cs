@@ -296,12 +296,7 @@ namespace LightningLib.lndrpc
 
             if (!response.IsSuccessful)
             {
-                throw new RestException()
-                {
-                    Content = response.Content,
-                    StatusCode = response.StatusCode,
-                    StatusDescription = response.StatusDescription
-                };
+                throw new RestException(message: "LND POST failed", content: response.Content, statusDescription: response.StatusDescription);
             }
 
             T info = response.Data;
@@ -405,12 +400,7 @@ namespace LightningLib.lndrpc
 
             if (!response.IsSuccessful)
             {
-                throw new RestException()
-                {
-                    Content = response.Content,
-                    StatusCode = response.StatusCode,
-                    StatusDescription = response.StatusDescription
-                };
+                throw new RestException(message: "LND GET failed", content: response.Content, statusDescription: response.StatusDescription);
             }
                 
             
