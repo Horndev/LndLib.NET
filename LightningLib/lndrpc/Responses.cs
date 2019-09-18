@@ -102,7 +102,13 @@ namespace LightningLib.lndrpc
         public string payment_preimage { get; set; }
         public string value_sat { get; set; }
         public string value_msat { get; set; }
+
+        // Depricated
         public string fee { get; set; }
+
+        public string fee_sat { get; set; }
+
+        public string fee_msat { get; set; }
     }
 
     public class GetPaymentsResult
