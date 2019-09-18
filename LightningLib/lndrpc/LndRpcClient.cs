@@ -66,7 +66,7 @@ namespace LightningLib.lndrpc
                             while (!reader.EndOfStream)
                             {
                                 string line = reader.ReadLine();
-                                InvoiceEvent e = SimpleJson.SimpleJson.DeserializeObject<InvoiceEvent>(line);
+                                InvoiceEvent e = SimpleJson.DeserializeObject<InvoiceEvent>(line);
 
                                 //Notify listeners of new invoice
                                 InvoicePaid?.Invoke(e.result);
