@@ -402,8 +402,6 @@ namespace LightningLib.lndrpc
             {
                 throw new RestException(message: "LND GET failed", content: response.Content, statusDescription: response.StatusDescription);
             }
-                
-            
 
             T info = response.Data;
             return info;

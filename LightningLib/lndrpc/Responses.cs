@@ -121,13 +121,21 @@ namespace LightningLib.lndrpc
         public string identity_pubkey { get; set; }
         public string alias { get; set; }
         public int num_active_channels { get; set; }
+        public int num_inactive_channels { get; set; }
         public int num_peers { get; set; }
         public int block_height { get; set; }
         public string block_hash { get; set; }
         public bool synced_to_chain { get; set; }
-        public List<string> chains { get; set; }
+        public List<Chain> chains { get; set; }
         public List<string> uris { get; set; }
         public string best_header_timestamp { get; set; }
+        public string version { get; set; }
+    }
+
+    public class Chain
+    {
+        public string chain { get; set; }
+        public string network { get; set; }
     }
 
     /// <summary>
@@ -149,7 +157,7 @@ namespace LightningLib.lndrpc
 
     public class Channel
     {
-        public bool active { get; set; }
+        public bool? active { get; set; }
         public string remote_pubkey { get; set; }
         public string channel_point { get; set; }
         public string chan_id { get; set; }
@@ -163,6 +171,12 @@ namespace LightningLib.lndrpc
         public string num_updates { get; set; }
         public string total_satoshis_sent { get; set; }
         public string total_satoshis_received { get; set; }
+        public bool @private { get; set; }
+        public string chan_status_flags { get; set; }
+        public string local_chan_reserve_sat { get; set; }
+        public string remote_chan_reserve_sat { get; set; }
+        public bool? initiator { get; set; }
+        public bool? static_remote_key { get; set; }
     }
 
     public class GetChannelsResponse
