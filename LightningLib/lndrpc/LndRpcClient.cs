@@ -242,13 +242,18 @@ namespace LightningLib.lndrpc
                 readMacaroon: _macaroonAdmin);
         }
 
-        public GetPaymentsResult GetPayments()
+        public GetPaymentsResult GetPayments(bool include_incomplete = false)
         {
+            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                {"include_incomplete",  include_incomplete ? "true" : "false"},
+            };
+
             return LndApiGetObj<GetPaymentsResult>(
                 host: _host,
                 restpath: "/v1/payments",
                 port: 8080,
-                urlParameters: null,
+                urlParameters: parameters,
                 readMacaroon: _macaroonAdmin);
         }
 
