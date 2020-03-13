@@ -227,7 +227,8 @@ namespace LightningLib.lndrpc
         {
             return LndApiGetObj<Invoice>(
                 host: _host,
-                restpath: "/v1/invoice/" + rhash_hex, out string responseStr,
+                restpath: "/v1/invoice/" + rhash_hex,
+                responseStr: out _,
                 port: 8080,
                 urlParameters: null,
                 readMacaroon: _macaroonAdmin);
@@ -248,7 +249,8 @@ namespace LightningLib.lndrpc
 
                 return LndApiGetObj<Invoice>(
                     host: _host,
-                    restpath: "/v1/invoice", out responseStr,
+                    restpath: "/v1/invoice",
+                    responseStr: out responseStr,
                     port: 8080,
                     urlParameters: null,
                     queryParameters: parameters,
@@ -259,7 +261,8 @@ namespace LightningLib.lndrpc
                 
                 return LndApiGetObj<Invoice>(
                     host: _host,
-                    restpath: "/v1/invoice/" + rhash_hex, out responseStr,
+                    restpath: "/v1/invoice/" + rhash_hex,
+                    responseStr: out responseStr,
                     port: 8080,
                     urlParameters: null,
                     readMacaroon: _macaroonAdmin);
@@ -281,7 +284,8 @@ namespace LightningLib.lndrpc
 
             var obj = LndApiGetObj<GetPaymentsResult>(
                 host: _host,
-                restpath: "/v1/payments", out responseStr,
+                restpath: "/v1/payments",
+                responseStr: out responseStr,
                 port: 8080,
                 urlParameters: null,
                 queryParameters: parameters,
