@@ -61,13 +61,18 @@ namespace LightningLib.lndrpc
 
     public class Invoice
     {
+        public string memo { get; set; }
         public string r_preimage { get; set; }
         public string r_hash { get; set; }
         public string value { get; set; }
+        public string value_msat { get; set; }
         public string creation_date { get; set; }
         public string payment_request { get; set; }
+        public object description_hash { get; set; }
         public string expiry { get; set; }
+        public string fallback_addr { get; set; }
         public string cltv_expiry { get; set; }
+        public bool @private { get; set; }
         public string add_index { get; set; }
         public bool? settled { get; set; }
         public string settle_date { get; set; }
@@ -75,7 +80,9 @@ namespace LightningLib.lndrpc
         public string amt_paid { get; set; }
         public string amt_paid_sat { get; set; }
         public string amt_paid_msat { get; set; }
-        public string memo { get; set; }
+        public string state { get; set; }
+        public List<Htlc> htlcs { get; set; }
+        public bool is_keysend { get; set; }
     }
 
     /// <summary>
@@ -104,6 +111,8 @@ namespace LightningLib.lndrpc
         public string value_msat { get; set; }
         public string status { get; set; }
         public string payment_request { get; set; }
+        public string creation_time_ns { get; set; }
+        public List<Htlc> htlcs { get; set; }
 
         // Depricated
         public string fee { get; set; }
@@ -227,12 +236,53 @@ namespace LightningLib.lndrpc
         public string cltv_expiry { get; set; }
     }
 
+    public class CustomRecords
+    {
+    }
+
     public class Hop
     {
         public string chan_id { get; set; }
         public string chan_capacity { get; set; }
         public string amt_to_forward { get; set; }
+        public string fee { get; set; }
         public int expiry { get; set; }
+        public string amt_to_forward_msat { get; set; }
+        public string fee_msat { get; set; }
+        public string pub_key { get; set; }
+        public bool tlv_payload { get; set; }
+        public object mpp_record { get; set; }
+        public CustomRecords custom_records { get; set; }
+    }
+
+    public class Route
+    {
+        public int total_time_lock { get; set; }
+        public string total_fees { get; set; }
+        public string total_amt { get; set; }
+        public List<Hop> hops { get; set; }
+        public string total_fees_msat { get; set; }
+        public string total_amt_msat { get; set; }
+    }
+    public class Htlc
+    {
+        public string status { get; set; }
+        public Route route { get; set; }
+        public string attempt_time_ns { get; set; }
+        public string resolve_time_ns { get; set; }
+        public object failure { get; set; }
+
+
+        public string chan_id { get; set; }
+        public string htlc_index { get; set; }
+        public string amt_msat { get; set; }
+        public int accept_height { get; set; }
+        public string accept_time { get; set; }
+        public string resolve_time { get; set; }
+        public int expiry_height { get; set; }
+        public string state { get; set; }
+        public CustomRecords custom_records { get; set; }
+        public string mpp_total_amt_msat { get; set; }
     }
 
     public class PaymentRoute

@@ -126,32 +126,37 @@ namespace LightningLib.lndrpc
 
         public GetInfoResponse GetInfo()
         {
-            return LndApiGetObj<GetInfoResponse>(_host, "/v1/getinfo", readMacaroon: _macaroonRead);
+            return LndApiGetObj<GetInfoResponse>(_host, "/v1/getinfo", out string responseStr, readMacaroon: _macaroonRead);
         }
 
         public GetChanInfoResponse GetChanInfo(string chanid)
         {
-            return LndApiGetObj<GetChanInfoResponse>(_host, "/v1/graph/edge/{chan_id}",
+            return LndApiGetObj<GetChanInfoResponse>(_host, "/v1/graph/edge/{chan_id}", out string responseStr,
                 urlParameters: new Dictionary<string, string>() { { "chan_id", chanid } },
                 readMacaroon: _macaroonRead);
         }
 
         public GetNodeInfoResponse GetNodeInfo(string pubkey)
         {
-            return LndApiGetObj<GetNodeInfoResponse>(_host, "/v1/graph/node/{pub_key}",
+            return LndApiGetObj<GetNodeInfoResponse>(_host, "/v1/graph/node/{pub_key}", out string responseStr,
                 urlParameters: new Dictionary<string, string>() { { "pub_key", pubkey } },
                 readMacaroon: _macaroonRead);
         }
 
+        public SendPaymentResponse PayInvoice(string invoice, out string responseStr)
+        {
+            var payreqParam = new { payment_request = invoice };
+            return LndApiPost<SendPaymentResponse>(_host, "/v1/channels/transactions", payreqParam, out responseStr, adminMacaroon: _macaroonAdmin);
+        }
+
         public SendPaymentResponse PayInvoice(string invoice)
         {
-            var payreqParam = new { payment_request = invoice};
-            return LndApiPost<SendPaymentResponse>(_host, "/v1/channels/transactions", payreqParam, adminMacaroon: _macaroonAdmin);
+            return PayInvoice(invoice, out string responseStr);
         }
 
         public GetChannelsResponse GetChannels()
         {
-            return LndApiGetObj<GetChannelsResponse>(_host, "/v1/channels", readMacaroon: _macaroonRead);
+            return LndApiGetObj<GetChannelsResponse>(_host, "/v1/channels", out string responseStr, readMacaroon: _macaroonRead);
         }
 
         public DecodePaymentResponse DecodePayment(string invoice)
@@ -160,7 +165,7 @@ namespace LightningLib.lndrpc
             {
                 {"pay_req",  invoice},
             };
-            return LndApiGetObj<DecodePaymentResponse>(_host, "/v1/payreq/{pay_req}", urlParameters: parameters, readMacaroon: _macaroonRead);
+            return LndApiGetObj<DecodePaymentResponse>(_host, "/v1/payreq/{pay_req}", out string responseStr, urlParameters: parameters, readMacaroon: _macaroonRead);
         }
 
         /// <summary>
@@ -183,7 +188,7 @@ namespace LightningLib.lndrpc
         public AddInvoiceResponse AddInvoice(Invoice invoice)
         {
             // Posting to the invoices endpoint creates a new invoice
-            return LndApiPost<AddInvoiceResponse>(_host, "/v1/invoices", invoice, adminMacaroon: _macaroonInvoice);
+            return LndApiPost<AddInvoiceResponse>(_host, "/v1/invoices", invoice, out string responseStr, adminMacaroon: _macaroonInvoice);
         }
 
         /// <summary>
@@ -200,7 +205,7 @@ namespace LightningLib.lndrpc
                 index_offset = 0,
                 num_max_events = 50000,     // This is the max returned.  TODO: Need to update to do paging if more than 50k are returned
             };
-            return LndApiPost<ForwardingEventsResponse>(_host, "/v1/switch", reqObj, adminMacaroon: _macaroonAdmin);
+            return LndApiPost<ForwardingEventsResponse>(_host, "/v1/switch", reqObj, out string responseStr, adminMacaroon: _macaroonAdmin);
         }
 
         public GetInvoicesResult GetInvoices(bool pendingOnly = false, int numMaxInvoices = 0, bool reversed = false)
@@ -215,49 +220,81 @@ namespace LightningLib.lndrpc
             {
                 parameters.Add("num_max_invoices", Convert.ToString(numMaxInvoices));
             }
-            return LndApiGetObj<GetInvoicesResult>(_host, "/v1/invoices", 8080, parameters, readMacaroon: _macaroonRead);
+            return LndApiGetObj<GetInvoicesResult>(_host, "/v1/invoices", out string responseStr, 8080, parameters, readMacaroon: _macaroonRead);
         }
 
         public Invoice GetInvoiceFromHashStr(string rhash_hex)
         {
             return LndApiGetObj<Invoice>(
                 host: _host,
-                restpath: "/v1/invoice/" + rhash_hex,
+                restpath: "/v1/invoice/" + rhash_hex, out string responseStr,
                 port: 8080,
                 urlParameters: null,
                 readMacaroon: _macaroonAdmin);
         }
 
-        public Invoice GetInvoice(string rhash)
+        public Invoice GetInvoice(string rhash, out string responseStr, bool useQuery = false)
         {
             DataEncoders.HexEncoder h = new DataEncoders.HexEncoder();
             var rhash_bytes = Convert.FromBase64String(rhash);
             var rhash_hex = h.EncodeData(rhash_bytes);
 
-            return LndApiGetObj<Invoice>(
-                host: _host, 
-                restpath: "/v1/invoice/" + rhash_hex, 
-                port: 8080, 
-                urlParameters: null, 
-                readMacaroon: _macaroonAdmin);
+            if (useQuery)
+            {
+                Dictionary<string, string> parameters = new Dictionary<string, string>()
+                {
+                    {"r_hash",  rhash},
+                };
+
+                return LndApiGetObj<Invoice>(
+                    host: _host,
+                    restpath: "/v1/invoice", out responseStr,
+                    port: 8080,
+                    urlParameters: null,
+                    queryParameters: parameters,
+                    readMacaroon: _macaroonAdmin);
+            }
+            else
+            {
+                
+                return LndApiGetObj<Invoice>(
+                    host: _host,
+                    restpath: "/v1/invoice/" + rhash_hex, out responseStr,
+                    port: 8080,
+                    urlParameters: null,
+                    readMacaroon: _macaroonAdmin);
+            }
+           
         }
 
-        public GetPaymentsResult GetPayments(bool include_incomplete = false)
+        public Invoice GetInvoice(string rhash, bool useQuery = false)
+        {
+            return GetInvoice(rhash, out string responseStr, useQuery);
+        }
+
+        public GetPaymentsResult GetPayments(out string responseStr, bool include_incomplete = false)
         {
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
                 {"include_incomplete",  include_incomplete ? "true" : "false"},
             };
 
-            return LndApiGetObj<GetPaymentsResult>(
+            var obj = LndApiGetObj<GetPaymentsResult>(
                 host: _host,
-                restpath: "/v1/payments",
+                restpath: "/v1/payments", out responseStr,
                 port: 8080,
-                urlParameters: parameters,
+                urlParameters: null,
+                queryParameters: parameters,
                 readMacaroon: _macaroonAdmin);
+            return obj;
         }
 
-        private static T LndApiPost<T>(string host, string restpath, object body, int port = 8080, string adminMacaroon = "") where T : new()
+        public GetPaymentsResult GetPayments(bool include_incomplete = false)
+        {
+            return GetPayments(out string responseStr, include_incomplete);
+        }
+
+        private static T LndApiPost<T>(string host, string restpath, object body, out string responseStr, int port = 8080, string adminMacaroon = "") where T : new()
         {
             
             string macaroon = "";
@@ -291,7 +328,8 @@ namespace LightningLib.lndrpc
             var request = new RestRequest(restpath, Method.POST);
             request.AddHeader("Grpc-Metadata-macaroon", macaroon);
             request.RequestFormat = DataFormat.Json;
-            request.AddBody(body);
+            //request.AddBody(body);
+            request.AddJsonBody(body);
             IRestResponse<T> response = client.Execute<T>(request);
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
@@ -305,6 +343,7 @@ namespace LightningLib.lndrpc
             }
 
             T info = response.Data;
+            responseStr = response.Content;
             return info;
         }
 
@@ -373,7 +412,7 @@ namespace LightningLib.lndrpc
             return responseStr;
         }
 
-        private T LndApiGetObj<T>(string host, string restpath, int port = 8080, Dictionary<string, string> urlParameters = null, string readMacaroon = "") where T : new()
+        private T LndApiGetObj<T>(string host, string restpath, out string responseStr, int port = 8080, Dictionary<string, string> urlParameters = null, Dictionary<string, string> queryParameters = null, string readMacaroon = "") where T : new()
         {
             string macaroon = readMacaroon;
             
@@ -400,7 +439,16 @@ namespace LightningLib.lndrpc
                     request.AddUrlSegment(p.Key, p.Value);
                 }
             }
+
+            if (queryParameters != null)
+            {
+                foreach (var p in queryParameters)
+                {
+                    request.AddQueryParameter(p.Key, p.Value);
+                }
+            }
             request.AddHeader("Grpc-Metadata-macaroon", macaroon);
+
             IRestResponse<T> response = client.Execute<T>(request);
 
             if (!response.IsSuccessful)
@@ -409,6 +457,7 @@ namespace LightningLib.lndrpc
             }
 
             T info = response.Data;
+            responseStr = response.Content;
             return info;
         }
     }
