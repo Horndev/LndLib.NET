@@ -289,14 +289,20 @@ namespace LightningLib.lndrpc
     {
         public int total_time_lock { get; set; }
         public string total_amt { get; set; }
+        public string total_amt_msat { get; set; }
         public string total_fees { get; set; }
+        public string total_fees_msat { get; set; }
         public List<Hop> hops { get; set; }
     }
 
     public class SendPaymentResponse
     {
+        [Obsolete]
         public string error { get; set; }
+        [Obsolete]
         public int code { get; set; }
+
+        public string payment_hash { get; set; }
         public string payment_error { get; set; }
         public string payment_preimage { get; set; }
         public PaymentRoute payment_route { get; set; }

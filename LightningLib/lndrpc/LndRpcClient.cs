@@ -146,7 +146,11 @@ namespace LightningLib.lndrpc
         public SendPaymentResponse PayInvoice(string invoice, out string responseStr)
         {
             var payreqParam = new { payment_request = invoice };
-            return LndApiPost<SendPaymentResponse>(_host, "/v1/channels/transactions", payreqParam, out responseStr, adminMacaroon: _macaroonAdmin);
+            return LndApiPost<SendPaymentResponse>(_host, 
+                "/v1/channels/transactions", 
+                payreqParam, 
+                out responseStr, 
+                adminMacaroon: _macaroonAdmin);
         }
 
         public SendPaymentResponse PayInvoice(string invoice)
