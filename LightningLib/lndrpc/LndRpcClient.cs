@@ -383,7 +383,7 @@ namespace LightningLib.lndrpc
             var request = new RestRequest(restpath, Method.POST);
             request.AddHeader("Grpc-Metadata-macaroon", macaroon);
             request.RequestFormat = DataFormat.Json;
-            request.AddBody(body);
+            request.AddJsonBody(body);
             var response = client.Execute(request);
             string responseStr = response.Content;
             return responseStr;
