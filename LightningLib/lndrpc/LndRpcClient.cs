@@ -279,6 +279,16 @@ namespace LightningLib.lndrpc
             return GetInvoice(rhash, out string responseStr, useQuery);
         }
 
+        public string DeletePayments(out string responseStr)
+        {
+            return LndApiDelete(host: _host,
+                restpath: "/v1/payments",
+                responseStr: out responseStr,
+                body: null,
+                port: 8080,
+                adminMacaroon: _macaroonAdmin);
+        }
+
         public GetPaymentsResult GetPayments(out string responseStr, bool include_incomplete = false)
         {
             Dictionary<string, string> parameters = new Dictionary<string, string>()
@@ -302,9 +312,63 @@ namespace LightningLib.lndrpc
             return GetPayments(out string responseStr, include_incomplete);
         }
 
+        private static string LndApiDelete(string host, string restpath, object body, out string responseStr, int port = 8080, string adminMacaroon = "")
+        {
+            string macaroon = "";
+            if (adminMacaroon != "")
+            {
+                macaroon = adminMacaroon;
+            }
+            else
+            {
+                throw new Exception("No admin macaroon provided.");
+            }
+
+            X509Certificate2 certificates = new X509Certificate2();
+
+            //var tlsc = h.DecodeData(tlscert);
+            //certificates.Import(tlsc);
+
+            var client = new RestClient("https://" + host + ":" + Convert.ToString(port));
+            client.ClientCertificates = new X509CertificateCollection() { certificates };
+
+            client.RemoteCertificateValidationCallback =
+                delegate (object s, X509Certificate certificate,
+                          X509Chain chain, SslPolicyErrors sslPolicyErrors)
+                {
+                    //TODO: fix later
+                    return true;
+                };
+
+            var request = new RestRequest(restpath, Method.DELETE);
+
+            request.AddHeader("Grpc-Metadata-macaroon", macaroon);
+            request.RequestFormat = DataFormat.Json;
+
+            //request.AddBody(body);
+            if (body != null)
+            {
+                request.AddJsonBody(body);
+            }
+            
+            IRestResponse response = client.Execute(request);
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                string Content = response.Content;
+                // "{\"error\":\"invoice expired. Valid until 2018-08-26 17:26:16 +0000 UTC\",\"code\":2}"
+            }
+
+            if (!response.IsSuccessful)
+            {
+                throw new RestException(message: "LND DELETE failed", content: response.Content, statusDescription: response.StatusDescription);
+            }
+
+            responseStr = response.Content;
+            return responseStr;
+        }
+
         private static T LndApiPost<T>(string host, string restpath, object body, out string responseStr, int port = 8080, string adminMacaroon = "") where T : new()
         {
-            
             string macaroon = "";
             if (adminMacaroon != "")
             {
