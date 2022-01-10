@@ -351,7 +351,7 @@ namespace LightningLib.lndrpc
                 request.AddJsonBody(body);
             }
             
-            IRestResponse response = client.Execute(request);
+            var response = client.Execute(request);
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 string Content = response.Content;
