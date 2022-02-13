@@ -66,23 +66,28 @@ namespace LightningLib.lndrpc
         public string r_hash { get; set; }
         public string value { get; set; }
         public string value_msat { get; set; }
+        public bool? settled { get; set; }
         public string creation_date { get; set; }
+        public string settle_date { get; set; }
         public string payment_request { get; set; }
         public object description_hash { get; set; }
         public string expiry { get; set; }
         public string fallback_addr { get; set; }
         public string cltv_expiry { get; set; }
+        public object route_hints { get; set; }
         public bool @private { get; set; }
         public string add_index { get; set; }
-        public bool? settled { get; set; }
-        public string settle_date { get; set; }
         public string settle_index { get; set; }
         public string amt_paid { get; set; }
         public string amt_paid_sat { get; set; }
         public string amt_paid_msat { get; set; }
         public string state { get; set; }
         public List<Htlc> htlcs { get; set; }
-        public bool is_keysend { get; set; }
+        public object features { get; set; }
+        public bool? is_keysend { get; set; }
+        public string payment_addr { get; set; }
+        public bool? is_amp { get; set; }
+        public object amp_invoice_state { get; set; }
     }
 
     /// <summary>
@@ -114,6 +119,13 @@ namespace LightningLib.lndrpc
         public string creation_time_ns { get; set; }
         public List<Htlc> htlcs { get; set; }
 
+        /// <summary>
+        /// The creation index of this payment. Each payment can be uniquely identified by this index, 
+        /// which may not strictly increment by 1 for payments made in older versions of lnd.
+        /// </summary>
+        public string payment_index { get; set; }
+        public string failure_reason { get; set; }
+
         // Depricated
         public string fee { get; set; }
 
@@ -122,9 +134,21 @@ namespace LightningLib.lndrpc
         public string fee_msat { get; set; }
     }
 
+    //public enum PaymentFailureReason
+    //{
+    //    FAILURE_REASON_NONE,
+    //    FAILURE_REASON_TIMEOUT,
+    //    FAILURE_REASON_NO_ROUTE,
+    //    FAILURE_REASON_ERROR,
+    //    FAILURE_REASON_INCORRECT_PAYMENT_DETAILS,
+    //    FAILURE_REASON_INSUFFICIENT_BALANCE,
+    //}
+
     public class GetPaymentsResult
     {
         public List<Payment> payments { get; set; }
+        public string first_index_offset { get; set; }
+        public string last_index_offset { get; set; }
     }
 
     public class GetInfoResponse
@@ -234,6 +258,10 @@ namespace LightningLib.lndrpc
         public string expiry { get; set; }
         public string description { get; set; } // This is the memo
         public string cltv_expiry { get; set; }
+        public string description_hash { get; set; }
+        public string fallback_addr { get; set; }
+        public string payment_addr { get; set; }
+        public string num_msat { get; set; }
     }
 
     public class CustomRecords
