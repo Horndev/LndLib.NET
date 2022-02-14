@@ -285,7 +285,7 @@ namespace LightningLib.lndrpc
                 adminMacaroon: _macaroonAdmin);
         }
 
-        public GetPaymentsResult GetPayments(out string responseStr, bool include_incomplete = false, int? max_payments = null)
+        public GetPaymentsResult GetPayments(out string responseStr, bool include_incomplete = false, bool? reversed = null, int? index_offset = null, int? max_payments = null)
         {
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
@@ -295,6 +295,16 @@ namespace LightningLib.lndrpc
             if (max_payments.HasValue)
             {
                 parameters.Add("max_payments", max_payments.Value.ToString());
+            }
+
+            if (index_offset.HasValue)
+            {
+                parameters.Add("index_offset", index_offset.Value.ToString());
+            }
+
+            if (reversed.HasValue)
+            {
+                parameters.Add("reversed", reversed.Value ? "true" : "false");
             }
 
             var obj = LndApiGetObj<GetPaymentsResult>(
@@ -308,9 +318,9 @@ namespace LightningLib.lndrpc
             return obj;
         }
 
-        public GetPaymentsResult GetPayments(bool include_incomplete = false, int? max_payments = null)
+        public GetPaymentsResult GetPayments(bool include_incomplete = false, bool? reversed = null, int? index_offset = null, int? max_payments = null)
         {
-            return GetPayments(out string responseStr, include_incomplete, max_payments);
+            return GetPayments(out string responseStr, include_incomplete, reversed, index_offset, max_payments);
         }
 
         private static string LndApiDelete(string host, string restpath, object body, out string responseStr, int port = 8080, string adminMacaroon = "")
