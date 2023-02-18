@@ -402,8 +402,13 @@ namespace LightningLib.lndrpc
 
             //var tlsc = h.DecodeData(tlscert);
             //certificates.Import(tlsc);
+            var options = new RestClientOptions("https://" + host + ":" + Convert.ToString(port))
+            {
+                Timeout = 300000 // 5 minutes in milliseconds
+            };
 
-            var client = new RestClient("https://" + host + ":" + Convert.ToString(port));
+            var client = new RestClient(options);
+            //var client = new RestClient("https://" + host + ":" + Convert.ToString(port));
             //client.ClientCertificates = new X509CertificateCollection() { certificates };
 
             //client.RemoteCertificateValidationCallback =
